@@ -27,7 +27,7 @@ app.use(
 
 // 🔄 CORS setup
 const corsOptions = {
-  origin: "http://localhost:5173", 
+  origin: "https://thisispublicledger.vercel.app", // http://localhost:5173 https://thisispublicledger.vercel.app
   credentials: true,               
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
 };

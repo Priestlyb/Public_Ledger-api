@@ -71,8 +71,19 @@ exports.register = async (req, res) => {
 };
 
 /**
+ * ME (Session-based)
+ */
+exports.me = (req, res) => {
+  if (req.session.user) {
+    return res.json({ loggedIn: true, user: req.session.user });
+  }
+  res.json({ loggedIn: false });
+};
+
+/**
  * LOGIN (Session-based)
  */
+
 exports.login = async (req, res) => {
   try {
     const user = await User.findOne({ email: req.body.email });

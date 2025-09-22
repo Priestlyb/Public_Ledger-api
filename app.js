@@ -8,6 +8,10 @@ const authRoute = require("./routes/authRoutes");
 
 const app = express();
 
+// 🛠 Trust proxy (needed for secure cookies on Vercel/Render/Heroku)
+app.set("trust proxy", 1);
+
+// 🔐 Session setup
 app.use(
   session({
     secret: process.env.SESSION_SECRET || "supersecret",
@@ -15,11 +19,12 @@ app.use(
     saveUninitialized: false,
     store: MongoStore.create({
       mongoUrl: process.env.MONGO_URI,
-      ttl: 24 * 60 * 60, 
+      ttl: 24 * 60 * 60, // 1 day
     }),
     cookie: {
-      httpOnly: true, 
-      secure: process.env.NODE_ENV === "production",
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production", // Secure only in production
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax", // Important for cross-origin
       maxAge: 1000 * 60 * 60 * 24, // 1 day
     },
   })
@@ -27,8 +32,11 @@ app.use(
 
 // 🔄 CORS setup
 const corsOptions = {
-  origin: "https://thisispublicledger.vercel.app", // http://localhost:5173 https://thisispublicledger.vercel.app
-  credentials: true,               
+  origin: [
+    "http://localhost:5173",
+    "https://thisispublicledger.vercel.app", 
+  ],
+  credentials: true, // allow cookies to be sent
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
 };
 app.use(cors(corsOptions));
